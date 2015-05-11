@@ -1,15 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.pod.podtestapp" >
+    package="com.pod.podtestapp">
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name" >
+            android:name=".activity.MainActivity"
+            android:label="@string/app_name"/>
+
+        <meta-data
+            android:name="POD_API_KEY"
+            android:value="podio-puzzle" />
+        <meta-data
+            android:name="POD_API_SECRET"
+            android:value="2u8c5SbylhvJ1uzeYMIsNS9fePA6hlkAyGtGjlWaN2r9FrThhcmwBh67EPHUpCHd" />
+
+        <activity
+            android:name=".activity.LoginActivity"
+            android:label="@string/title_activity_login"/>
+        <activity
+            android:name=".activity.SplashActivity"
+            android:label="@string/title_activity_splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

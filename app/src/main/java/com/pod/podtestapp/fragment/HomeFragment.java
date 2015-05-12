@@ -7,8 +7,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.pod.podtestapp.PodApplication;
 import com.pod.podtestapp.R;
@@ -16,26 +21,35 @@ import com.pod.podtestapp.adapter.OrganizationsAdapter;
 import com.pod.podtestapp.model.Organization;
 import com.pod.podtestapp.model.Space;
 import com.pod.podtestapp.network.PodServiceManager;
+import com.pod.podtestapp.util.PreferenceUtil;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import retrofit.RetrofitError;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
 public class HomeFragment extends Fragment {
+    private static final String ARG_LOADING = "arg_loading";
+    private static final String ARG_ITEMS = "arg_items";
+    private boolean mIsLoading = false;
+
+    private ArrayList<OrganizationsAdapter.Item> mItems;
+
     @Inject
     protected PodServiceManager mPodServiceManager;
     private Subscription mOrganizationsSubscription;
 
 
     private OnFragmentInteractionListener mListener;
-    private RecyclerView mOrganizationsRecyclerView;
     private OrganizationsAdapter mOrganizationsAdapter;
+
+    private RecyclerView mOrganizationsRecyclerView;
+    private ProgressBar mLoadingProgressBar;
 
 
     public static HomeFragment newInstance() {
@@ -50,7 +64,7 @@ public class HomeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((PodApplication) getActivity().getApplication()).getPodComponent().inject(this);
-        fetchOrganizations();
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -63,9 +77,46 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (savedInstanceState != null) {
+            mIsLoading = savedInstanceState.getBoolean(ARG_LOADING, false);
+            mItems = savedInstanceState.getParcelableArrayList(ARG_ITEMS);
+        }
         initViews(view);
+        if (mIsLoading || mItems == null) {
+            fetchOrganizations();
+        }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mOrganizationsSubscription != null)
+            mOrganizationsSubscription.unsubscribe();
+    }
+
+    private void initViews(View view) {
+        mOrganizationsRecyclerView = (RecyclerView) view.findViewById(R.id.organizations);
+        mOrganizationsAdapter = new OrganizationsAdapter(mItems);
+        mOrganizationsRecyclerView.setAdapter(mOrganizationsAdapter);
+        mOrganizationsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mLoadingProgressBar = (ProgressBar) view.findViewById(R.id.loading_progress);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_home, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_reload:
+                fetchOrganizations();
+                return true;
+        }
+        return false;
+    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -84,35 +135,47 @@ public class HomeFragment extends Fragment {
         mListener = null;
     }
 
-    private void initViews(View view) {
-        mOrganizationsRecyclerView = (RecyclerView) view.findViewById(R.id.organizations);
-        mOrganizationsAdapter = new OrganizationsAdapter(null);
-        mOrganizationsRecyclerView.setAdapter(mOrganizationsAdapter);
-        mOrganizationsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-    }
 
     private void fetchOrganizations() {
+        mLoadingProgressBar.setVisibility(View.VISIBLE);
+        mOrganizationsRecyclerView.setVisibility(View.INVISIBLE);
+        mIsLoading = true;
         mOrganizationsSubscription = mPodServiceManager.getOrganizations()
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(this::getOrganizationsAdapterItems)
                 .subscribe(
                         organizations -> {
-                            Log.e("Org", organizations.toString());
+                            mLoadingProgressBar.setVisibility(View.GONE);
+                            mOrganizationsRecyclerView.setVisibility(View.VISIBLE);
+                            mItems = organizations;
                             mOrganizationsAdapter.setItems(organizations);
                             mOrganizationsAdapter.notifyDataSetChanged();
                         },
                         throwable -> {
+                            mIsLoading = false;
+                            mLoadingProgressBar.setVisibility(View.GONE);
                             Log.e("Error", throwable.toString());
-
+                            RetrofitError error = (RetrofitError) throwable;
+                            // clear all credentials and show login screen if 401 (after one refresh)
+                            if (error.getResponse().getStatus() == 401) {
+                                PreferenceUtil.Session.setAccessToken(getActivity(), "");
+                                PreferenceUtil.Session.setRefreshToken(getActivity(), "");
+                                mListener.showLoginScreen();
+                            } else {
+                                showGenericErrorMessage();
+                            }
                         },
-                        () -> {
-                        }
+                        () -> mIsLoading = false
                 );
     }
 
+    private void showGenericErrorMessage() {
+        Toast.makeText(getActivity(), getString(R.string.message_error_generic), Toast.LENGTH_SHORT).show();
+    }
 
     public interface OnFragmentInteractionListener {
+        void showLoginScreen();
     }
 
     private ArrayList<OrganizationsAdapter.Item> getOrganizationsAdapterItems(ArrayList<Organization> organizations) {
@@ -122,10 +185,17 @@ public class HomeFragment extends Fragment {
             OrganizationsAdapter.SectionItem sectionItem = new OrganizationsAdapter.SectionItem(organization.getName());
             items.add(sectionItem);
             for (Space space : organization.getSpaces()) {
-                OrganizationsAdapter.SpaceItem spaceItem = new OrganizationsAdapter.SpaceItem(space);
+                OrganizationsAdapter.SpaceItem spaceItem = new OrganizationsAdapter.SpaceItem(space.getName());
                 items.add(spaceItem);
             }
         }
         return items;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(ARG_LOADING, mIsLoading);
+        outState.putParcelableArrayList(ARG_ITEMS, mItems);
     }
 }

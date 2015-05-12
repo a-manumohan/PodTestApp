@@ -1,5 +1,7 @@
 package com.pod.podtestapp.adapter;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pod.podtestapp.R;
-import com.pod.podtestapp.model.Space;
 
 import java.util.ArrayList;
 
@@ -47,8 +48,8 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.View
             SectionItem sectionItem = (SectionItem) mItems.get(position);
             ((SectionViewHolder) viewHolder).sectionNameTextView.setText(sectionItem.sectionName);
         } else {
-            Space space = ((SpaceItem) mItems.get(position)).space;
-            ((SpaceViewHolder) viewHolder).spaceNameTextView.setText(space.getName());
+            SpaceItem spaceItem = (SpaceItem) mItems.get(position);
+            ((SpaceViewHolder) viewHolder).spaceNameTextView.setText(spaceItem.spaceName);
         }
     }
 
@@ -86,7 +87,7 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.View
     /**
      * wrapper interface for recycler view items
      */
-    public interface Item {
+    public interface Item extends Parcelable {
     }
 
     /**
@@ -98,16 +99,66 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.View
         public SectionItem(String sectionName) {
             this.sectionName = sectionName;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeString(sectionName);
+        }
+
+        public static final Parcelable.Creator<SectionItem> CREATOR
+                = new Parcelable.Creator<SectionItem>() {
+            public SectionItem createFromParcel(Parcel in) {
+                return new SectionItem(in);
+            }
+
+            public SectionItem[] newArray(int size) {
+                return new SectionItem[size];
+            }
+        };
+
+        private SectionItem(Parcel in) {
+            sectionName = in.readString();
+        }
     }
 
     /**
      * Space item wrapper
      */
     public static class SpaceItem implements Item {
-        Space space;
+        String spaceName;
 
-        public SpaceItem(Space space) {
-            this.space = space;
+        public SpaceItem(String spaceName) {
+            this.spaceName = spaceName;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int i) {
+            parcel.writeString(spaceName);
+        }
+
+        public static final Parcelable.Creator<SpaceItem> CREATOR
+                = new Parcelable.Creator<SpaceItem>() {
+            public SpaceItem createFromParcel(Parcel in) {
+                return new SpaceItem(in);
+            }
+
+            public SpaceItem[] newArray(int size) {
+                return new SpaceItem[size];
+            }
+        };
+
+        private SpaceItem(Parcel in) {
+            spaceName = in.readString();
         }
     }
 

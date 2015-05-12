@@ -1,16 +1,18 @@
 package com.pod.podtestapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.pod.podtestapp.PodApplication;
 import com.pod.podtestapp.R;
 import com.pod.podtestapp.fragment.HomeFragment;
+import com.pod.podtestapp.util.PreferenceUtil;
 
 
-public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener {
 
     private static final String TAG_HOME = "tag_home";
 
@@ -18,6 +20,9 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         showHomeFragment();
     }
 
@@ -36,17 +41,34 @@ public class MainActivity extends AppCompatActivity implements HomeFragment.OnFr
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_sign_out) {
+            signOut();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void showHomeFragment(){
-        HomeFragment homeFragment = HomeFragment.newInstance();
+    private void signOut() {
+        PreferenceUtil.Session.setAccessToken(this, "");
+        PreferenceUtil.Session.setRefreshToken(this, "");
+        showLoginScreen();
+    }
+
+    private void showHomeFragment() {
+
+        HomeFragment homeFragment = (HomeFragment) getSupportFragmentManager().findFragmentByTag(TAG_HOME);
+        if (homeFragment == null)
+            homeFragment = HomeFragment.newInstance();
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.child_container,homeFragment,TAG_HOME)
+                .replace(R.id.child_container, homeFragment, TAG_HOME)
                 .commit();
+    }
+
+    @Override
+    public void showLoginScreen() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

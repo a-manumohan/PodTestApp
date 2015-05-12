@@ -17,4 +17,7 @@
     <string name="message_direction_enter_password">Please enter your password</string>
     <string name="message_title_signing_in">Signing in</string>
     <string name="message_message_please_wait">Please wait</string>
+    <string name="title_toolbar">Podio</string>
+    <string name="action_sign_out">Sign out</string>
+    <string name="action_reload">Reload</string>
 </resources>

@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void login(String username, String password) {
         if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
+            mProgressDialog = new ProgressDialog(getApplicationContext());
         }
         mProgressDialog.setTitle(getString(R.string.message_title_signing_in));
         mProgressDialog.setMessage(getString(R.string.message_message_please_wait));

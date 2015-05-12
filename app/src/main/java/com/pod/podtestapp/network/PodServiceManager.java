@@ -28,10 +28,10 @@ import rx.functions.Func1;
 public class PodServiceManager {
     private static final String POD_API_KEY = "POD_API_KEY";
     private static final String POD_API_SECRET = "POD_API_SECRET";
-    private PodService mPodService;
-    private PodAuthService mPodAuthService;
+    private final PodService mPodService;
+    private final PodAuthService mPodAuthService;
     private String apiKey, apiSecret;
-    private Context mContext;
+    private final Context mContext;
 
     @Inject
     public PodServiceManager(Context context) {

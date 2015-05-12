@@ -10,7 +10,7 @@ import rx.Observable;
 /**
  * Created by manuMohan on 15/05/12.
  */
-public interface PodAuthService {
+interface PodAuthService {
     @FormUrlEncoded
     @POST("/oauth/token")
     Observable<Auth> authenticate(

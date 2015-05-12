@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * Created by manuMohan on 15/05/11.
  */
 public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    ArrayList<Item> mItems;
+    private ArrayList<Item> mItems;
 
     public OrganizationsAdapter(ArrayList<Item> items) {
         mItems = items;
@@ -67,7 +67,7 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public class SectionViewHolder extends RecyclerView.ViewHolder {
-        TextView sectionNameTextView;
+        final TextView sectionNameTextView;
 
         public SectionViewHolder(View itemView) {
             super(itemView);
@@ -76,7 +76,7 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public class SpaceViewHolder extends RecyclerView.ViewHolder {
-        TextView spaceNameTextView;
+        final TextView spaceNameTextView;
 
         public SpaceViewHolder(View itemView) {
             super(itemView);
@@ -94,7 +94,7 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.View
      * Section item wrapper - will display organization name
      */
     public static class SectionItem implements Item {
-        String sectionName;
+        final String sectionName;
 
         public SectionItem(String sectionName) {
             this.sectionName = sectionName;
@@ -130,7 +130,7 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.View
      * Space item wrapper
      */
     public static class SpaceItem implements Item {
-        String spaceName;
+        final String spaceName;
 
         public SpaceItem(String spaceName) {
             this.spaceName = spaceName;

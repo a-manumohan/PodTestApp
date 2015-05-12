@@ -85,9 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         Button loginButton = (Button) findViewById(R.id.sign_in);
-        loginButton.setOnClickListener(view -> {
-            validateAndLogin();
-        });
+        loginButton.setOnClickListener(view -> validateAndLogin());
         if (isLoading) {
             login(mUsername, mPassword);
         }

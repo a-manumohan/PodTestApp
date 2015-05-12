@@ -58,10 +58,19 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.View
         return mItems == null ? 0 : mItems.size();
     }
 
+    /**
+     * @param parent
+     * @return view for section item . organization text view
+     */
     private View getSectionView(ViewGroup parent) {
         return LayoutInflater.from(parent.getContext()).inflate(R.layout.view_section, parent, false);
     }
 
+    /**
+     *
+     * @param parent
+     * @return view for space item
+     */
     private View getSpaceView(ViewGroup parent) {
         return LayoutInflater.from(parent.getContext()).inflate(R.layout.view_space, parent, false);
     }
@@ -86,6 +95,7 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     /**
      * wrapper interface for recycler view items
+     * Parcelable
      */
     public interface Item extends Parcelable {
     }

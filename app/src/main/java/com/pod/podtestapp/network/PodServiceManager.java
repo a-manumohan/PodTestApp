@@ -12,6 +12,9 @@ import com.pod.podtestapp.util.PreferenceUtil;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -21,12 +24,14 @@ import rx.functions.Func1;
 /**
  * Created by manuMohan on 15/05/11.
  */
+@Singleton
 public class PodServiceManager {
     private PodService mPodService;
     private PodAuthService mPodAuthService;
     private String apiKey, apiSecret;
     private Context mContext;
 
+    @Inject
     public PodServiceManager(Context context) {
         mContext = context;
         try {

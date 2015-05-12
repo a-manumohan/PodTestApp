@@ -11,9 +11,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.pod.podtestapp.PodApplication;
 import com.pod.podtestapp.R;
 import com.pod.podtestapp.network.PodServiceManager;
 import com.pod.podtestapp.util.PreferenceUtil;
+
+import javax.inject.Inject;
 
 import retrofit.RetrofitError;
 import rx.Subscription;
@@ -25,7 +28,8 @@ public class LoginActivity extends AppCompatActivity {
     private static final String ARG_USERNAME = "arg_username";
     private static final String ARG_PASSWORD = "arg_password";
 
-    private PodServiceManager mPodServiceManager;
+    @Inject
+    protected PodServiceManager mPodServiceManager;
     private ProgressDialog mProgressDialog;
     private Subscription mLoginSubscription;
 
@@ -39,12 +43,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ((PodApplication)getApplication()).getPodComponent().inject(this);
         if (savedInstanceState != null) {
             isLoading = savedInstanceState.getBoolean(ARG_LOADING, false);
             mUsername = savedInstanceState.getString(ARG_USERNAME, "");
             mPassword = savedInstanceState.getString(ARG_PASSWORD, "");
         }
-        mPodServiceManager = new PodServiceManager(getApplicationContext());
 
         initViews();
     }

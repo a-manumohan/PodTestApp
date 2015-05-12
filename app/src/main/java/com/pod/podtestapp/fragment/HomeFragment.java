@@ -8,8 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pod.podtestapp.PodApplication;
 import com.pod.podtestapp.R;
 import com.pod.podtestapp.network.PodServiceManager;
+
+import javax.inject.Inject;
 
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -17,7 +20,8 @@ import rx.schedulers.Schedulers;
 
 
 public class HomeFragment extends Fragment {
-    private PodServiceManager mPodServiceManager;
+    @Inject
+    protected PodServiceManager mPodServiceManager;
     private Subscription mOrganizationsSubscription;
 
 
@@ -35,7 +39,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPodServiceManager = new PodServiceManager(getActivity());
+        ((PodApplication)getActivity().getApplication()).getPodComponent().inject(this);
         fetchOrganizations();
     }
 

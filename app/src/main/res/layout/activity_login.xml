@@ -35,9 +35,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:hint="@string/hint_username"
-                android:imeActionId="0"
-                android:imeActionLabel="@string/action_next"
-                android:inputType="text" />
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:text="sebrehtest+puzzle@gmail.com"/>
 
             <EditText
                 android:id="@+id/password"
@@ -45,9 +45,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_normal"
                 android:hint="@string/hint_password"
-                android:imeActionId="1"
+                android:imeActionId="111"
                 android:imeActionLabel="@string/action_sign_in"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:text="password1234"/>
 
             <Button
                 android:id="@+id/sign_in"

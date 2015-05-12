@@ -6,14 +6,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.pod.podtestapp.R;
+import com.pod.podtestapp.fragment.HomeFragment;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements HomeFragment.OnFragmentInteractionListener{
+
+    private static final String TAG_HOME = "tag_home";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        showHomeFragment();
     }
 
     @Override
@@ -36,5 +40,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showHomeFragment(){
+        HomeFragment homeFragment = HomeFragment.newInstance();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.child_container,homeFragment,TAG_HOME)
+                .commit();
     }
 }

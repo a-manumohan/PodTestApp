@@ -11,4 +11,10 @@
     <string name="action_sign_in">Log in</string>
     <string name="title_activity_splash">Podio</string>
     <string name="label_app_name">Podio</string>
+    <string name="message_error_generic">Something went wrong with the server. Please try again</string>
+    <string name="message_error_wrong_username_password">Wrong username or password. Please try again</string>
+    <string name="message_direction_enter_username">Please enter your username</string>
+    <string name="message_direction_enter_password">Please enter your password</string>
+    <string name="message_title_signing_in">Signing in</string>
+    <string name="message_message_please_wait">Please wait</string>
 </resources>

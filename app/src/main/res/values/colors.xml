@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="pod_theme">#5392bb</color>
+    <color name="pod_theme_dark">#28486c</color>
+</resources>

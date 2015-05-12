@@ -4,13 +4,10 @@
     android:layout_height="match_parent"
     tools:context="com.pod.podtestapp.fragment.HomeFragment">
 
-    <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/organizations"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"/>-->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="MAMAMAM"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/organizations"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
 
 </FrameLayout>

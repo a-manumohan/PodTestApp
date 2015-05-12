@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     ArrayList<Item> mItems;
 
-    OrganizationsAdapter(ArrayList<Item> items) {
+    public OrganizationsAdapter(ArrayList<Item> items) {
         mItems = items;
     }
 
@@ -92,22 +92,31 @@ public class OrganizationsAdapter extends RecyclerView.Adapter<RecyclerView.View
     /**
      * Section item wrapper - will display organization name
      */
-    public class SectionItem implements Item {
+    public static class SectionItem implements Item {
         String sectionName;
+
+        public SectionItem(String sectionName) {
+            this.sectionName = sectionName;
+        }
     }
 
     /**
      * Space item wrapper
      */
-    public class SpaceItem implements Item {
+    public static class SpaceItem implements Item {
         Space space;
+
+        public SpaceItem(Space space) {
+            this.space = space;
+        }
     }
 
     /**
      * function to update recycler view contents. call notifydatasetchanged after settings items
+     *
      * @param items Items to be displayed on recycler view
      */
     public void setItems(ArrayList<Item> items) {
-        this.mItems = mItems;
+        this.mItems = items;
     }
 }

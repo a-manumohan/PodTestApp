@@ -26,6 +26,8 @@ import rx.functions.Func1;
  */
 @Singleton
 public class PodServiceManager {
+    private static final String POD_API_KEY = "POD_API_KEY";
+    private static final String POD_API_SECRET = "POD_API_SECRET";
     private PodService mPodService;
     private PodAuthService mPodAuthService;
     private String apiKey, apiSecret;
@@ -36,8 +38,8 @@ public class PodServiceManager {
         mContext = context;
         try {
             ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            apiKey = applicationInfo.metaData.getString("POD_API_KEY");
-            apiSecret = applicationInfo.metaData.getString("POD_API_SECRET");
+            apiKey = applicationInfo.metaData.getString(POD_API_KEY);
+            apiSecret = applicationInfo.metaData.getString(POD_API_SECRET);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

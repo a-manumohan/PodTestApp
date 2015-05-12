@@ -58,8 +58,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onDestroy();
         if (mLoginSubscription != null)
             mLoginSubscription.unsubscribe();
-        if (mProgressDialog != null)
-            mProgressDialog.hide();
+        if (mProgressDialog != null) {
+            mProgressDialog.cancel();
+        }
     }
 
     private void initViews() {
@@ -70,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mUserNameEditText.setOnEditorActionListener((textView, action, keyEvent) -> {
             if (action == EditorInfo.IME_ACTION_NEXT) {
-                validateAndLogin();
+                mPasswordEditText.requestFocus();
                 return true;
             }
             return false;
@@ -110,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void login(String username, String password) {
         if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(getApplicationContext());
+            mProgressDialog = new ProgressDialog(this);
         }
         mProgressDialog.setTitle(getString(R.string.message_title_signing_in));
         mProgressDialog.setMessage(getString(R.string.message_message_please_wait));

@@ -19,6 +19,7 @@ import com.pod.podtestapp.util.PreferenceUtil;
 import javax.inject.Inject;
 
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -43,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ((PodApplication)getApplication()).getPodComponent().inject(this);
+        ((PodApplication) getApplication()).getPodComponent().inject(this);
         if (savedInstanceState != null) {
             isLoading = savedInstanceState.getBoolean(ARG_LOADING, false);
             mUsername = savedInstanceState.getString(ARG_USERNAME, "");
@@ -130,13 +131,17 @@ public class LoginActivity extends AppCompatActivity {
                         throwable -> {
                             isLoading = false;
                             mProgressDialog.hide();
-                            RetrofitError retrofitError = (RetrofitError) throwable;
-                            switch (retrofitError.getResponse().getStatus()) {
-                                case 400:
-                                    showUsernamePasswordWrongMessage();
-                                    break;
-                                default:
-                                    showGenericErrorMessage();
+                            Response response = ((RetrofitError) throwable).getResponse();
+                            if (response != null)
+                                switch (response.getStatus()) {
+                                    case 400:
+                                        showUsernamePasswordWrongMessage();
+                                        break;
+                                    default:
+                                        showGenericErrorMessage();
+                                }
+                            else {
+                                showNetworkErrorMessage();
                             }
                         },
                         () -> {
@@ -144,6 +149,10 @@ public class LoginActivity extends AppCompatActivity {
                             isLoading = false;
                         }
                 );
+    }
+
+    private void showNetworkErrorMessage() {
+        Toast.makeText(this, getString(R.string.message_error_network), Toast.LENGTH_SHORT).show();
     }
 
     private void showGenericErrorMessage() {

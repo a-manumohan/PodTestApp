@@ -18,6 +18,7 @@ import javax.inject.Singleton;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 import rx.Observable;
 import rx.functions.Func1;
 
@@ -78,13 +79,13 @@ public class PodServiceManager {
      * Retries once if the request gets a 401
      *
      * @param observableToRetry the observable that will be retried after getting a new token
-     * @param <T>type of the object emitted by observable
+     * @param <T>type           of the object emitted by observable
      * @return error if not 401 , otherwise observable to retry.
      */
     private <T> Func1<Throwable, ? extends Observable<? extends T>> refreshTokenAndRetry(final Observable<T> observableToRetry) {
         return throwable -> {
-            RetrofitError error = (RetrofitError) throwable;
-            if (error.getResponse().getStatus() == 401) {
+            Response response = ((RetrofitError) throwable).getResponse();
+            if (response != null && response.getStatus() == 401) {
                 if (TextUtils.isEmpty(PreferenceUtil.Session.getAccessToken(mContext))) {
                     return Observable.error(throwable);
                 }

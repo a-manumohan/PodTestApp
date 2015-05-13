@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import retrofit.RetrofitError;
+import retrofit.client.Response;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -156,18 +157,26 @@ public class HomeFragment extends Fragment {
                             mIsLoading = false;
                             mLoadingProgressBar.setVisibility(View.GONE);
                             Log.e("Error", throwable.toString());
-                            RetrofitError error = (RetrofitError) throwable;
+                            Response response = ((RetrofitError) throwable).getResponse();
                             // clear all credentials and show login screen if 401 (after one refresh)
-                            if (error.getResponse().getStatus() == 401) {
-                                PreferenceUtil.Session.setAccessToken(getActivity(), "");
-                                PreferenceUtil.Session.setRefreshToken(getActivity(), "");
-                                mListener.showLoginScreen();
+                            if (response != null) {
+                                if (response.getStatus() == 401) {
+                                    PreferenceUtil.Session.setAccessToken(getActivity(), "");
+                                    PreferenceUtil.Session.setRefreshToken(getActivity(), "");
+                                    mListener.showLoginScreen();
+                                } else {
+                                    showGenericErrorMessage();
+                                }
                             } else {
-                                showGenericErrorMessage();
+                                showNetworkErrorMessage(); //if response is null possibly network problem.
                             }
                         },
                         () -> mIsLoading = false
                 );
+    }
+
+    private void showNetworkErrorMessage() {
+        Toast.makeText(getActivity(), getString(R.string.message_error_network), Toast.LENGTH_SHORT).show();
     }
 
     private void showGenericErrorMessage() {

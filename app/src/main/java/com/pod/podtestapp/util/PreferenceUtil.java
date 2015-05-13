@@ -8,9 +8,9 @@ import android.content.SharedPreferences;
  */
 public abstract class PreferenceUtil {
     public static class Session {
-        private static final String ARG_SESSION = "session";
-        private static final String ARG_ACCESS_TOKEN = "access_token";
-        private static final String ARG_REFRESH_TOKEN = "refresh_token";
+        public static final String ARG_SESSION = "session";
+        public static final String ARG_ACCESS_TOKEN = "access_token";
+        public static final String ARG_REFRESH_TOKEN = "refresh_token";
 
         public static void setAccessToken(Context context, String accessToken) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(ARG_SESSION, Context.MODE_PRIVATE);

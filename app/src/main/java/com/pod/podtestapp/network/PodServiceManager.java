@@ -62,6 +62,20 @@ public class PodServiceManager {
         mPodService = restAdapter.create(PodService.class);
     }
 
+    /**
+     * Use this constructor for testing
+     *
+     * @param podAuthService
+     * @param podService
+     */
+    public PodServiceManager(PodAuthService podAuthService, PodService podService, Context context) {
+        mPodAuthService = podAuthService;
+        mPodService = podService;
+        mContext = context;
+        apiKey = "";
+        apiSecret = "";
+    }
+
     public Observable<Auth> authenticate(String username, String password) {
 
         return mPodAuthService.authenticate("password", username, password, apiKey, apiSecret);
@@ -95,6 +109,7 @@ public class PodServiceManager {
                     PreferenceUtil.Session.setRefreshToken(mContext, auth.getRefreshToken());
                     return observableToRetry;
                 });
+
             }
             return Observable.error(throwable);
         };
